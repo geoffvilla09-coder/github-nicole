@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siomai Order Form</title>
+   <body style="background-image:url('homemade123.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center;">
+    <font color=White>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #e63946;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #d00000;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h2>Siomai Order Form</h2>
+    <form action="/submit-siomai-order" method="post">
+        <!-- Customer Information -->
+        <div class="form-group">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        </div>
+        <div class="form-group">
+            <label for="contact">Contact Number:</label>
+            <input type="tel" id="contact" name="contact" placeholder="Enter your phone number" required>
+        </div>
+
+        <!-- Siomai Selection -->
+        <div class="form-group">
+            <label for="siomai-type">Siomai Type:</label>
+            <select id="siomai-type" name="siomai_type" required>
+                <option value="">Select siomai type</option>
+                <option value="pork">Pork Siomai - &#8369;5.00/piece</option>
+                <option value="shrimp">Shrimp Siomai - &#8369;5.50/piece</option>
+                <option value="chicken">Chicken Siomai - &#8369;5.00/piece</option>
+                <option value="vegetable">Vegetable Siomai - &#8369;5.80/piece</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity (pieces):</label>
+            <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+        </div>
+
+        <!-- Add-ons -->
+        <div class="form-group">
+            <label>Add-ons:</label>
+            <input type="checkbox"  id="soy-sauce" name="addons" value="soy_sauce">
+            <label for="soy-sauce"  style="display: inline;">Soy Sauce with Calamansi (&#8369;5.00)</label><br>
+            <input type="checkbox"  id="chili-sauce" name="addons" value="chili_sauce">
+            <label for="chili-sauce" style="display: inline;">Chili Sauce (&#8369;5.00)</label><br>
+            <input type="checkbox" id="garlic" name="addons" value="garlic">
+            <label for="garlic" style="display: inline;">Extra Garlic (&#8369;5.00)</label>
+        </div>
+
+        <!-- Delivery or Pickup -->
+        <div class="form-group">
+            <label>Order Type:</label>
+            <input type="radio" id="pickup" name="order_type" value="pickup" required>
+            <label for="pickup" style="display: inline;">Pickup</label>
+            <input type="radio" id="delivery" name="order_type" value="delivery">
+            <label for="delivery" style="display: inline;">Delivery</label>
+        </div>
+
+        <!-- Delivery Address (if applicable) -->
+        <div class="form-group" id="delivery-address" style="display: none;">
+            <label for="address">Delivery Address:</label>
+            <textarea id="address" name="address" rows="3" placeholder="Enter delivery address"></textarea>
+        </div>
+
+        <!-- Special Instructions -->
+        <div class="form-group">
+            <label for="instructions">Special Instructions:</label>
+            <textarea id="instructions" name="instructions" rows="3" placeholder="Any special requests?"></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit">Place Siomai Order</button>
+    </form>
+
+    <script>
+        // Show/hide delivery address based on order type
+        const pickup = document.getElementById('pickup');
+        const delivery = document.getElementById('delivery');
+        const addressField = document.getElementById('delivery-address');
+
+        pickup.addEventListener('change', () => {
+            addressField.style.display = 'none';
+            document.getElementById('address').removeAttribute('required');
+        });
+
+        delivery.addEventListener('change', () => {
+            addressField.style.display = 'block';
+            document.getElementById('address').setAttribute('required', 'true');
+        });
+    </script>
+</body>
+</html>

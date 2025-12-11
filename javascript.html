@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nicole Siomai Order Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #ff6b6b, #ffb88c); padding: 20px; }
+    .container { max-width: 750px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+    h1 { text-align: center; color: #e74c3c; font-size: 3em; margin: 0; }
+    h1 span { color: #f39c12; }
+    .subtitle { text-align: center; color: #7f8c8d; font-size: 1.2em; margin-bottom: 25px; }
+    label { display: block; margin-top: 18px; font-weight: bold; color: #2c3e50; }
+    input, select, textarea { width: 100%; padding: 12px; margin-top: 8px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; }
+    input:focus, select:focus { border-color: #e74c3c; }
+    .siomai-box { background: #fff5f5; padding: 20px; border-radius: 15px; margin: 15px 0; border: 2px dashed #e74c3c; }
+    table { width: 100%; margin: 25px 0; border-collapse: collapse; background: #fdfdfd; }
+    th { background: #e74c3c; color: white; padding: 15px; }
+    td { padding: 12px; border-bottom: 1px solid #eee; }
+    .total-row { font-size: 1.6em; font-weight: bold; color: #e74c3c; background: #ffeaea; }
+    button { background: #e74c3c; color: white; padding: 18px; border: none; border-radius: 50px; cursor: pointer; font-size: 22px; width: 100%; margin-top: 20px; }
+    button:hover { background: #c0392b; }
+    #receipt { display: none; margin-top: 30px; border: 4px dashed #e74c3c; padding: 30px; background: #fff0f0; border-radius: 20px; position: relative; }
+    .close-btn { position: absolute; top: 15px; right: 20px; background: #c0392b; width: 45px; height: 45px; border-radius: 50%; color: white; font-size: 28px; cursor: pointer; }
+    .logo { text-align: center; font-size: 80px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">Nicole Siomai</div>
+  <h1>Nicole <span>Siomai Order Form</span></h1>
+  <p class="subtitle">Always freshly cooked • Large • Deliciousp!</p>
+
+  <form id="orderForm">
+    <!-- Customer Info -->
+    <label>Full Name *</label>
+    <input type="text" id="name" required />
+
+    <label>Contact Number *</label>
+    <input type="text" id="contact" placeholder="09xxxxxxxxx" required />
+
+    <label>Email (optional)</label>
+    <input type="email" id="email" />
+
+    <label>Delivery Address *</label>
+    <textarea id="address" rows="3" required></textarea>
+
+    <hr style="margin:30px 0; border:1px dashed #ff6b6b;">
+
+    <div class="siomai-box">
+      <label>Siomai Flavor</label>
+      <select id="flavor" onchange="calcTotal()">
+        <option value="Pork">Pork Siomai - ₱30 / 4pcs</option>
+        <option value="Shrimp">Shrimp Siomai - ₱40 / 4pcs</option>
+        <option value="Japanese">Japanese Siomai - ₱45 / 4pcs</option>
+        <option value="Beef">Beef Siomai - ₱50 / 4pcs</option>
+      </select>
+
+      <label>How many orders? (4pcs per order)</label>
+      <input type="number" id="qty" min="1" value="1" onchange="calcTotal()" required />
+
+      <label>Sauce</label>
+      <select id="sauce">
+        <option>Chili Garlic (Spicy)</option>
+        <option>Soy Sauce + Calamansi</option>
+        <option>No Sauce</option>
+      </select>
+
+      <label>Add-ons</label>
+      <input type="checkbox" id="rice" value="20" onchange="calcTotal()"> Steamed Rice (+₱20)<br>
+      <input type="checkbox" id="drink" value="25" onchange="calcTotal()"> Iced Tea / Lemonade (+₱25)<br>
+      <input type="checkbox" id="extra" value="15" onchange="calcTotal()"> Extra Chili Garlic (+₱15)
+    </div>
+
+    <label>Payment Method</label>
+    <select id="payment">
+      <option>Cash on Delivery</option>
+      <option>GCash</option>
+      <option>Pick-up (Save ₱20 delivery fee)</option>
+    </select>
+
+    <!-- Summary -->
+    <table>
+      <tr><th>Item</th><th>Price</th></tr>
+      <tr><td><span id="showFlavor">Pork Siomai</span> × <span id="showQty">1</span> order</td><td>₱<span id="basePrice">30</span></td></tr>
+      <tr><td>Add-ons</td><td>₱<span id="addPrice">0</span></td></tr>
+      <tr class="total-row">
+        <td>TOTAL TO PAY:</td>
+        <td>₱<span id="totalAmount">30</span></td>
+      </tr>
+    </table>
+
+    <button type="button" onclick="generateReceipt()">ORDER NOW & PRINT RECEIPT</button>
+  </form>
+
+  <!-- Receipt -->
+  <div id="receipt">
+    <div class="close-btn" onclick="document.getElementById('receipt').style.display='none'">X</div>
+    <div class="logo">Nicole Siomai</div>
+    <h2>OFFICIAL RECEIPT</h2>
+    <p><strong>Customer:</strong> <span id="rName"></span></p>
+    <p><strong>Contact:</strong> <span id="rContact"></span> | <strong>Email:</strong> <span id="rEmail"></span></p>
+    <p><strong>Address:</strong> <span id="rAddress"></span></p>
+    <hr>
+    <p><strong>Order:</strong> <span id="rFlavor"></span> × <span id="rQty"></span> orders (4pcs each)</p>
+    <p><strong>Sauce:</strong> <span id="rSauce"></span></p>
+    <p><strong>Add-ons:</strong> <span id="rAddons">None</span></p>
+    <p><strong>Payment:</strong> <span id="rPayment"></span></p>
+    <hr>
+    <h2 style="text-align:right; color:#e74c3c;">TOTAL: ₱<span id="rTotal">30</span></h2>
+    <p style="text-align:center; margin-top:25px; font-weight:bold; color:#e74c3c;">
+      Salamat sa order, Ate!<br>
+      Malapit na ang mainit na siomai mo! 
+    </p>
+    <p style="text-align:center; color:#777; font-size:0.9em;">
+      Order Time: <span id="orderTime"></span>
+    </p>
+  </div>
+</div>
+
+<script>
+function calcTotal() {
+  const prices = { "Pork":30, "Shrimp":40, "Japanese":45, "Beef":50 };
+  const flavor = document.getElementById("flavor").value;
+  const qty = parseInt(document.getElementById("qty").value) || 1;
+  const base = prices[flavor] * qty;
+
+  let addons = 0;
+  if (document.getElementById("rice").checked) addons += 20;
+  if (document.getElementById("drink").checked) addons += 25;
+  if (document.getElementById("extra").checked) addons += 15;
+
+  const total = base + addons;
+
+  document.getElementById("showFlavor").textContent = flavor + " Siomai";
+  document.getElementById("showQty").textContent = qty;
+  document.getElementById("basePrice").textContent = base;
+  document.getElementById("addPrice").textContent = addons;
+  document.getElementById("totalAmount").textContent = total;
+}
+
+function generateReceipt() {
+  if (!document.getElementById("name").value || !document.getElementById("contact").value || !document.getElementById("address").value) {
+    alert("Complete Name, Contact, and Address muna!");
+    return;
+  }
+
+  calcTotal();
+
+  document.getElementById("rName").textContent = document.getElementById("name").value;
+  document.getElementById("rContact").textContent = document.getElementById("contact").value;
+  document.getElementById("rEmail").textContent = document.getElementById("email").value || "N/A";
+  document.getElementById("rAddress").textContent = document.getElementById("address").value;
+  document.getElementById("rFlavor").textContent = document.getElementById("flavor").value + " Siomai";
+  document.getElementById("rQty").textContent = document.getElementById("qty").value;
+  document.getElementById("rSauce").textContent = document.getElementById("sauce").value;
+  document.getElementById("rPayment").textContent = document.getElementById("payment").value;
+  document.getElementById("rTotal").textContent = document.getElementById("totalAmount").textContent;
+
+  let adds = [];
+  if (document.getElementById("rice").checked) adds.push("Steamed Rice");
+  if (document.getElementById("drink").checked) adds.push("Iced Tea");
+  if (document.getElementById("extra").checked) adds.push("Extra Chili");
+  document.getElementById("rAddons").textContent = adds.length > 0 ? adds.join(", ") : "None";
+
+  document.getElementById("orderTime").textContent = new Date().toLocaleString();
+  document.getElementById("receipt").style.display = "block";
+
+  // Optional: auto print
+  // setTimeout(() => window.print(), 1000);
+}
+</script>
+
+</body>
+</html>
